@@ -1,0 +1,20 @@
+{% extends "base_admin.html" %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <div class="card border-0 shadow mt-5">
+        <div class="card-body">
+            <div class="d-flex justify-content-center w-100">
+                <i class="fa-solid fa-warning display-1 text-warning"></i>
+            </div>
+            <h4 class="display-4 text-center w-100">Kas oled kindel ?</h4>
+            <p class="fs-5 w-100 text-center">Menüüst {{ valitud_kp | date:"d.m" }} tehakse koopia kuupäevale {{ duplikaadi_kp | date:"d.m" }}</p>
+            <div class="d-flex justify-content-center w-100">
+                <a href='{% url "bistrooapp_admin:duplicate_menu" %}' class="btn btn-dark"><i class="fa-solid fa-copy me-2"></i>Tee koopia</a>
+                <a href='{% url "bistrooapp_admin:menuu_list" %}' class="ms-2 btn btn-outline-dark">Tagasi töölauale</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

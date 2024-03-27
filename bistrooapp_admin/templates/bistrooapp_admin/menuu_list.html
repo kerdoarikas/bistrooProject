@@ -1,0 +1,210 @@
+{% extends "base_admin.html" %}
+{% load static %}
+{% block content %}
+
+{% load my_template_tag %}
+
+<div class="container mt-4">
+    <div class="card border-0 shadow">
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <div class="d-block">
+                    <form action="" method="post" id="kuupaevaForm" class="mb-1">
+                        {% csrf_token %}
+                        {{ datePicker }}
+                    </form>
+                </div>
+                <div>
+                    {% if menuu_items or themes %}
+                        <h4>{{ formatted_date }} Menüü</h4>
+                    {% else %}
+                        <div style="text-center">
+                            <h4 class="head_text">{{ formatted_date }} Menüü puudub</h4>
+                        </div>
+                    {% endif %}
+                </div>
+                <div>
+                    <a class="btn btn-sm btn-secondary" href='{% url "bistrooapp_admin:move_back" %}'><i class="fa-solid fa-angle-left"></i></a>
+                    <a class="btn btn-sm btn-secondary" href='{% url "bistrooapp_admin:today" %}' class="tana">Täna</a>
+                    <a class="btn btn-sm btn-secondary" href='{% url "bistrooapp_admin:move_forward" %}'><i class="fa-solid fa-angle-right"></i></a>
+                </div>
+            </div>
+            <div class="d-flex w-100 mt-2 justify-content-between">
+                <div class="d-flex">
+
+                    <a class="btn btn-sm btn-dark me-1" href="{% url 'bistrooapp_admin:add_theme' %}" class="menuu_nupud"><i class="fa-solid fa-heading me-1"></i>Pealkirjad</a>
+                    {% for category in categories %}
+                        <a class="btn btn-sm btn-dark me-1 {% if not themes %} disabled {% endif %}" href="{% url 'bistrooapp_admin:add_subline' category=category.category_name %}" class="menuu_nupud"><i class="fa-solid fa-plus me-1"></i>{{ category.category_name }} </a>
+                    {% endfor %}
+
+                </div>
+                <div>
+                    <div class="dropdown">
+                      <button class="btn btn-sm btn-dark {% if not themes %} disabled {% endif %}" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-copy me-2"></i>
+                          Loo koopia
+                      </button>
+                      <ul class="dropdown-menu border-0 shadow">
+                        <div class="m-2">
+                            <form action='{% url "bistrooapp_admin:duplicate_message" %}' method="post" id="duplikaadivorm">
+                                {% csrf_token %}
+                                {{ duplicate_date.as_p }}
+                                <input type="submit" value="Tee koopia" class="btn btn-dark">
+                            </form>
+                        </div>
+                      </ul>
+                    </div>
+                </div>
+            </div>
+            {% if menuu_items or themes %}
+            <div class="row bg-secondary shadow rounded p-2 mt-3">
+                <div class="col-12">
+                    <div class="d-flex w-100 justify-content-start">
+                        <div class="d-block">
+                            {% if themes.0.theme %}
+                                <p class="fs-4 text-light fw-semibold mb-1">Teema: {{ themes.0.theme }}</p>
+                            {% else %}
+                                <p class="small text-light fw-semibold"><i class="fa-solid fa-warning me-2"></i>Teemapäev puudub</p>
+                            {% endif %}
+
+                            {% if themes.0.recommenders %}
+                                <p class="small text-light fw-semibold mb-1">{{ themes.0.recommenders }}</p>
+                            {% else %}
+                                <p class="small fw-semibold text-light"><i class="fa-solid fa-warning me-2"></i>Soovitajad puuduvad</p>
+                            {% endif %}
+                        </div>
+                        {% if is_current %}
+                        <a class="btn btn-sm btn-warning ms-auto" href='{% url "bistrooapp_admin:update_theme" theme_id=theme_id %}' title="Muuda" style="height: fit-content;">
+                            <i class="fa-solid fa-edit me-2"></i>
+                            Muuda
+                        </a>
+                        <a class="btn btn-sm btn-danger ms-2 {% if not themes.0.theme %} disabled {% endif %}" href='{% url "bistrooapp_admin:delete_theme" theme_id=theme_id %}' title="Kustuta" style="height: fit-content;">
+                            <i class="fa-solid fa-trash me-2"></i>
+                            Kustuta
+                        </a>
+                        {% endif %}
+                    </div>
+                    <div class="d-flex w-100">
+                        {% if themes.0.author %}
+                            <p class="small text-light w-100 text-start fw-semibold">{{ themes.0.author }}</p>
+                        {% else %}
+                            <p class="small fw-semibold w-100 text-start text-light"><i class="fa-solid fa-warning me-2"></i>Autorid puuduvad</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <table class="table table-borderless table-striped mt-3">
+                    {% setval "False" as isBreak %}
+                    {% for category in categories %}
+                        {% for menuu_item in menuu_items %}
+                            {% if isBreak == "True" %}
+
+                            {% else %}
+                                {% if category.category_name == menuu_item.category_name.category_name %}
+                                    <thead>
+                                    <tr class="table-dark">
+                                        <td></td>
+                                        <td class="fw-semibold">{{ category.category_name }}</td>
+                                        <td class="head_text">Hind</td>
+                                        <td class="head_text"></td>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for menuu_item in menuu_items %}
+                                        {% if menuu_item.category_name.category_name == category.category_name %}
+                                            <tr>
+                                            <td style="text-align: center" class="{% if menuu_item.is_hided %}menuu_read selected-row {% else %} menuu_read{% endif %}">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" name="selectedItems" value="{{ menuu_item.id }}" onclick="handleCheckboxSelection(this)" {% if menuu_item.is_hided %}checked{% endif %}>
+                                                </div>
+                                            </td>
+                                                <td class="{% if menuu_item.is_hided %}menuu_read selected-row {% else %} menuu_read{% endif %}">{{ menuu_item.description }}</td>
+                                                {% if menuu_item.price_full == 0 and menuu_item.price_half == 0 or menuu_item.price_full == 0 and menuu_item.price_half == None %}
+                                                    <td style="width: 200px" class="{% if menuu_item.is_hided %}menuu_read selected-row {% else %} menuu_read{% endif %}">Prae hinna sees</td>
+                                                {% elif menuu_item.price_full and menuu_item.price_half == None or menuu_item.price_half == 0 %}
+                                                    <td style="width: 200px" class="{% if menuu_item.is_hided %}menuu_read selected-row {% else %} menuu_read{% endif %}">{{ menuu_item.price_full }}</td>
+                                                {% else %}
+                                                    <td style="width: 200px" class="{% if menuu_item.is_hided %}menuu_read selected-row {% else %} menuu_read{% endif %}">{{ menuu_item.price_full }}
+                                                        / {{ menuu_item.price_half }}</td>
+                                                {% endif %}
+
+                                                <td class="{% if menuu_item.is_hided %}menuu_read selected-row {% else %} menuu_read{% endif %}">
+                                                    {% if is_current %}
+                                                        <div class="d-flex">
+                                                            <a class="btn btn-sm btn-light" href='{% url "bistrooapp_admin:update_subline" line_id=menuu_item.id %}' title="Muuda">
+                                                                <i class="fa-solid fa-edit"></i>
+                                                            </a>
+                                                            <a class="btn btn-sm btn-light ms-2" href='{% url "bistrooapp_admin:delete_subline" line_id=menuu_item.id %}' title="Kustuta">
+                                                                <i class="fa-solid fa-trash"></i>
+                                                            </a>
+                                                        </div>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                    </tbody>
+                                    {% setval "True" as isBreak %}
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        {% setval "False" as isBreak %}
+                    {% endfor %}
+                </table>
+            {% else %}
+            <p class="w-100 text-center mt-5 small">
+                <i class="fa-solid fa-warning me-1"></i>
+                Sellel päeval puudub menüü! Saad alustada uue menüü loomist pealkirjade lisamisega.
+            </p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        var datePicker = $('#id_valitud_kp');
+
+        datePicker.change(function () {
+            var form = $('#kuupaevaForm');
+            form.submit()
+        });
+    });
+
+    window.onbeforeunload = function() {
+        sessionStorage.setItem('scrollPosition', window.scrollY.toString());
+    }
+
+    window.onload = function() {
+        var scrollPosition = sessionStorage.getItem('scrollPosition');
+        if (scrollPosition !== null) {
+            window.scrollTo(0, parseInt(scrollPosition));
+            sessionStorage.removeItem('scrollPosition');
+        }
+    }
+
+    function handleCheckboxSelection(checkbox) {
+        var row = checkbox.closest('tr');
+        var cells = row.getElementsByTagName('td');
+        if (checkbox.checked) {
+            for (var i = 0; i < cells.length; i++) {
+                cells[i].classList.add('selected-row');
+            }
+        } else {
+            for (var i = 0; i < cells.length; i++) {
+                cells[i].classList.remove('selected-row');
+            }
+        }
+        var checkboxId = checkbox.value;
+        $.ajax({
+            url: '{% url "bistrooapp_admin:hide_row" %}',
+            data: {
+                  'checkboxId': checkboxId
+            },
+            dataType: 'json'})
+    }
+</script>
+
+{% endblock %}

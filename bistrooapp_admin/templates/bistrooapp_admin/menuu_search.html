@@ -1,0 +1,21 @@
+{% extends "base_admin.html" %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <div class="card border-0 shadow mt-4">
+        <div class="card-body">
+            <h4>Otsing</h4>
+            <p class="small text-secondary">
+                Otsid midagi kindlat? Sisesta märksõna ja sirvi tulemusi.
+            </p>
+            <form method="post" action='{% url "bistrooapp_admin:menuu_search_list" %}' class="forms_gen" novalidate>
+                {% csrf_token %}
+                {{ menuu_search_form.as_p }}
+                <button type="submit" class="btn btn-dark"><i class="fa-solid fa-search me-2"></i>Otsi</button>
+                <a href='{% url "bistrooapp_admin:menuu_list" %}' class="btn btn-outline-dark">Tagasi töölauale</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

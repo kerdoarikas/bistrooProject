@@ -1,0 +1,18 @@
+{% extends "base_admin.html" %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <div class="card border-0 shadow mt-4">
+        <div class="card-body">
+            <h4>Muuda {{ current_date | date:"d.m.Y" }} pealkiri</h4>
+            <form method="post" class="forms_gen" action='{% url "bistrooapp_admin:update_theme" theme_id=theme_id %}'>
+                {% csrf_token %}
+                {{ theme_up_form.as_p}}
+                <button type="submit" class="btn btn-success"><i class="fa-solid fa-save me-2"></i>Salvesta</button>
+                <a href='{% url "bistrooapp_admin:menuu_list" %}' class="btn btn-outline-dark">Tagasi töölauale</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

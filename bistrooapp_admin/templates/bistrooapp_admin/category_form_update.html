@@ -1,0 +1,18 @@
+{% extends "base_admin.html" %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <div class="card border-0 shadow mt-4">
+        <div class="card-body">
+            <h4>Muuda {{ category.category_name | lower }}</h4>
+            <form method="post" class="forms_gen" novalidate>
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-success"><i class="fa-solid fa-save me-2"></i>Salvesta</button>
+                <a href='{% url "bistrooapp_admin:category" %}' class="btn btn-outline-dark">Tagasi listi</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
