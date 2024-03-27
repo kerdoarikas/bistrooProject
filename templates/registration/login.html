@@ -1,0 +1,57 @@
+{% extends "base_admin.html" %}
+
+{# LOGIMINE #}
+{% block content %}
+
+<div class="row mt-5">
+    <h3 class="w-100 text-center">Tere tulemast!</h3>
+    <p class="w-100 text-center small">
+        Bistroo haldamiseks palun logige sisse!
+    </p>
+    <div class="d-flex w-100 justify-content-center">
+        <div class="card border-0 shadow w-75">
+            <div class="card-body">
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <p class="alert alert-warning">{{ message }}</p>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                {% if form.errors %}
+                <p class="alert alert-warning">Vale kasutajanimi või parool.</p>
+                {% endif %}
+
+                {% if next %}
+                {% if user.is_authenticated %}
+                <p class="alert alert-warning">Sinu kontol puudub ligipääs.</p>
+                {% else %}
+                <p class="alert alert-warning">Jätkamiseks palun logi sisse.</p>
+                {% endif %}
+                {% endif %}
+
+                <form method="post" action="{% url 'login' %}" class="forms_gen">
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <p class="mb-0 small">Kasutajanimi</p>
+                        {{ form.username }}
+                    </div>
+
+                    <div class="form-group mt-2">
+                        <p class="mb-0 small">Parool</p>
+                        {{ form.password }}
+                    </div>
+
+                    <input class="btn btn-dark mt-3" type="submit" value="Sisene" class="menuu_nupud">
+
+                    <input type="hidden" name="next" value="{{ request.GET.next }}">
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

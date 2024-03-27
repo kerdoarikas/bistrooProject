@@ -1,0 +1,76 @@
+{% extends "base_public.html" %}
+
+{% block content %}
+    <div>
+        <div class="row" style="margin: 10px">
+            <div class="col-2"></div>
+            <div class="col-8 text-center headings">
+            <table>
+                <tr>
+                    <td>{{ formatted_date }}</td>
+                </tr>
+                {% if is_menuu %}
+                    {% if themes %}
+                        <tr>
+                            <td>
+                                {% if themes.0.theme %}
+                                    {{ themes.0.theme | upper }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {% if themes.0.recommenders %}
+                                    {{ themes.0.recommenders | upper }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {% if themes.0.author %}
+                                    {{ themes.0.author | upper }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% elif is_menuu == False %}
+                    <tr>
+                        <td>
+                            {{ "Menüüd pole veel sisestatud" | upper }}
+                        </td>
+                    <tr>
+                {% endif %}
+            </table>
+        </div>
+        <div class="col-2"></div>
+    </div>
+
+    {% regroup menuu_items by category_name__category_name as menu_list %}
+    <div>
+        {% for category in menu_list %}
+            <table class="table table-sm table-bordered">
+                <thead>
+                <tr>
+                    <td class="{% if forloop.counter == 1 %}pub_head_text_koolilouna{% else %}pub_head_text{% endif %}">{{ category.grouper | upper }}</td>
+                </tr>
+                </thead>
+                <tbody>
+                {% for subline in category.list %}
+                    <tr>
+                        <td style="{% if subline.is_hided == 0 %}background: #fafae9;{% else %}background: #fafae9; color: transparent; text-shadow: 0 0 8px #000; {% endif %}">
+                            <div class="row">
+                                <div class="col-10 pub_row_text">{{ subline.description | upper }}</div>
+                                <div class="col-2 pub_row_text">{{ subline.price_full }}</div>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        {% endfor %}
+    </div>
+
+    </div>
+
+{% endblock %}
