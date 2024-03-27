@@ -1,7 +1,7 @@
-Admin kasutaja
-kasutajanimi: kerdotak22
+Admin kasutaja: <br>
+kasutajanimi: kerdotak22 <br>
 parool: Parool1
 
-Bistroo kasutaja:
-kasutajanimi: bistroo
+Bistroo kasutaja: <br>
+kasutajanimi: bistroo <br>
 parool: Parool123
